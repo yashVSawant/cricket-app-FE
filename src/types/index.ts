@@ -98,6 +98,8 @@ export interface Tournament {
   banner?: string | null;
   registrationsCount?: number;
   matchesCount?: number;
+  registrations?: TournamentTeam[];
+  matches?: Match[];
 }
 
 export interface TournamentTeam {

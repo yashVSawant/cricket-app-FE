@@ -135,35 +135,15 @@ export default function CreateTeamPage() {
     }
   };
 
-  // If not logged in, prompt to log in / register
-  if (!isAuthLoading && !isAuthenticated) {
-    return (
-      <PageLayout maxWidth="xl" className="py-12">
-        <Card className="p-8 text-center border-border bg-surface shadow-sm">
-          <div className="w-14 h-14 rounded-2xl bg-secondary-50 text-secondary-600 flex items-center justify-center mx-auto mb-4">
-            <Users className="w-7 h-7" />
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Sign In to Create a Team
-          </h2>
-          <p className="text-sm text-muted max-w-md mx-auto mb-6 leading-relaxed">
-            While anyone can watch tournaments and live scores without an account, creating a cricket team and captaining a squad requires being signed in.
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <Link href="/login">
-              <Button variant="secondary" size="md" leftIcon={<LogIn className="w-4 h-4" />}>
-                Sign In
-              </Button>
-            </Link>
-            <Link href="/register">
-              <Button variant="outline" size="md">
-                Register as Player
-              </Button>
-            </Link>
-          </div>
-        </Card>
-      </PageLayout>
-    );
+  // If not logged in, redirect to login
+  useEffect(() => {
+    if (!isAuthLoading && !isAuthenticated) {
+      router.replace('/login');
+    }
+  }, [isAuthLoading, isAuthenticated, router]);
+
+  if (isAuthLoading || !isAuthenticated) {
+    return null;
   }
 
   // If team was successfully created, show confirmation & team key card

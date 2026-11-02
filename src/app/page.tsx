@@ -21,10 +21,12 @@ import { ScoreCard } from '@/components/domain/ScoreCard';
 import { TournamentCard } from '@/components/domain/TournamentCard';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { useAuth } from '@/hooks/useAuth';
 import { useGetLiveMatchesQuery } from '@/services/api/matchesApi';
 import { useGetTournamentsQuery } from '@/services/api/tournamentsApi';
 
 export default function HomePage() {
+  const { isAuthenticated } = useAuth();
   const { data: liveMatches = [], isLoading: isLiveLoading } = useGetLiveMatchesQuery();
   const { data: tournaments = [], isLoading: isTournamentsLoading } = useGetTournamentsQuery({ limit: 6 });
 
@@ -63,15 +65,17 @@ export default function HomePage() {
                 Browse Tournaments
               </Button>
             </Link>
-            <Link href="/teams/create">
-              <Button
-                variant="outline"
-                size="lg"
-                className="bg-primary-800/60 text-white border-primary-700/80 hover:bg-primary-800 hover:text-white"
-              >
-                Create Team
-              </Button>
-            </Link>
+            {isAuthenticated && (
+              <Link href="/teams/create">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="bg-primary-800/60 text-white border-primary-700/80 hover:bg-primary-800 hover:text-white"
+                >
+                  Create Team
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
 

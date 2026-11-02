@@ -1,6 +1,20 @@
 import { apiSlice } from './apiSlice';
 import { Match, ApiResponse } from '@/types';
 
+export interface CreateMatchPayload {
+  tournamentId: string;
+  teamAId: string;
+  teamBId: string;
+  venue: string;
+  startTime: string;
+  scorerId?: string;
+}
+
+export interface StartMatchPayload {
+  tossWonBy?: string;
+  battingFirstTeamId?: string;
+}
+
 export const matchesApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getMatches: builder.query<Match[], { status?: string; tournamentId?: string } | void>({
@@ -22,6 +36,7 @@ export const matchesApi = apiSlice.injectEndpoints({
             ]
           : [{ type: 'Match', id: 'LIST' }],
     }),
+
     getLiveMatches: builder.query<Match[], void>({
       query: () => ({
         url: '/matches',
@@ -41,6 +56,7 @@ export const matchesApi = apiSlice.injectEndpoints({
             ]
           : [{ type: 'Match', id: 'LIVE_LIST' }],
     }),
+
     getMatchById: builder.query<Match, string>({
       query: (id) => `/matches/${id}`,
       transformResponse: (response: ApiResponse<Match> | Match) => {
@@ -51,6 +67,43 @@ export const matchesApi = apiSlice.injectEndpoints({
       },
       providesTags: (_result, _error, id) => [{ type: 'Match', id }],
     }),
+
+    createMatch: builder.mutation<Match, CreateMatchPayload>({
+      query: (body) => ({
+        url: '/matches',
+        method: 'POST',
+        body,
+      }),
+      transformResponse: (response: ApiResponse<Match> | Match) => {
+        if (response && typeof response === 'object' && 'data' in response) {
+          return response.data;
+        }
+        return response as Match;
+      },
+      invalidatesTags: [
+        { type: 'Match', id: 'LIST' },
+        { type: 'Tournament', id: 'LIST' },
+      ],
+    }),
+
+    startMatch: builder.mutation<Match, { matchId: string; payload: StartMatchPayload }>({
+      query: ({ matchId, payload }) => ({
+        url: `/matches/${matchId}/start`,
+        method: 'POST',
+        body: payload,
+      }),
+      transformResponse: (response: ApiResponse<Match> | Match) => {
+        if (response && typeof response === 'object' && 'data' in response) {
+          return response.data;
+        }
+        return response as Match;
+      },
+      invalidatesTags: (_res, _err, { matchId }) => [
+        { type: 'Match', id: matchId },
+        { type: 'Match', id: 'LIST' },
+        { type: 'Match', id: 'LIVE_LIST' },
+      ],
+    }),
   }),
 });
 
@@ -58,5 +111,6 @@ export const {
   useGetMatchesQuery,
   useGetLiveMatchesQuery,
   useGetMatchByIdQuery,
+  useCreateMatchMutation,
+  useStartMatchMutation,
 } = matchesApi;
-

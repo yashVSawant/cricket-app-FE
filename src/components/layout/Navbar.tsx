@@ -88,6 +88,11 @@ export const Navbar: React.FC = () => {
           <div className="hidden md:flex items-center gap-3">
             {isAuthenticated && user ? (
               <div className="flex items-center gap-3">
+                <Link href="/teams/create">
+                  <Button variant="outline" size="sm" className="bg-primary-800 text-white border-primary-700 hover:bg-primary-700">
+                    Create Team
+                  </Button>
+                </Link>
                 <Link href="/profile" className="flex items-center gap-2">
                   <Avatar name={user.name} size="sm" status="online" />
                   <div className="flex flex-col text-left">
@@ -180,18 +185,25 @@ export const Navbar: React.FC = () => {
 
           <div className="pt-3 border-t border-primary-800/70 flex flex-col gap-2">
             {isAuthenticated && user ? (
-              <div className="flex items-center justify-between py-2">
-                <div className="flex items-center gap-2">
-                  <Avatar name={user.name} size="sm" />
-                  <div className="text-left">
-                    <p className="text-xs font-semibold text-white">
-                      {user.name}
-                    </p>
-                    <p className="text-[10px] text-primary-300">{user.email}</p>
+              <>
+                <div className="flex items-center justify-between py-2">
+                  <div className="flex items-center gap-2">
+                    <Avatar name={user.name} size="sm" />
+                    <div className="text-left">
+                      <p className="text-xs font-semibold text-white">
+                        {user.name}
+                      </p>
+                      <p className="text-[10px] text-primary-300">{user.email}</p>
+                    </div>
                   </div>
+                  <Badge variant="secondary" size="sm">{user.role}</Badge>
                 </div>
-                <Badge variant="secondary" size="sm">{user.role}</Badge>
-              </div>
+                <Link href="/teams/create" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="secondary" fullWidth size="sm">
+                    Create Team
+                  </Button>
+                </Link>
+              </>
             ) : (
               <div className="flex flex-col gap-2">
                 <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
